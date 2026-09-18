@@ -1,0 +1,26 @@
+{$PORTFOLIO_DOMAIN} {
+    encode zstd gzip
+    header {
+        X-Content-Type-Options nosniff
+        Referrer-Policy strict-origin-when-cross-origin
+        X-Frame-Options DENY
+    }
+    @django path /api/* /admin /admin/*
+    handle @django {
+        reverse_proxy backend:8000
+    }
+    handle_path /static/* {
+        root * /srv/django-static
+        file_server
+    }
+    handle_path /media/* {
+        root * /srv/media
+        header Content-Disposition attachment
+        file_server
+    }
+    handle {
+        root * /srv/portfolio
+        try_files {path} {path}/index.html =404
+        file_server
+    }
+}

@@ -1,0 +1,17 @@
+.git
+.env
+.env.*
+!.env.example
+.venv
+**/node_modules
+**/.git
+**/.next
+**/.vinext
+**/dist
+**/__pycache__
+**/*.pyc
+**/*.log
+**/*.tsbuildinfo
+db.sqlite3
+media
+staticfiles

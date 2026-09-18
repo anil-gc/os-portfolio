@@ -1,0 +1,43 @@
+{
+  "profile": {
+    "name": "Anil GC",
+    "headline": "Building Portfolio OS",
+    "location": "",
+    "intro": "A portfolio of my own.",
+    "bio": "I'm building an operating-system-style portfolio with React and Django REST Framework, with content managed through Django admin.",
+    "about": "This portfolio brings together my current work in one desktop-inspired workspace.\n\nThe project combines a React and TypeScript frontend with a modular Django REST Framework backend. I'm focusing on a clean project structure, editable content, and a responsive experience.",
+    "email": "",
+    "github_url": "",
+    "linkedin_url": "",
+    "avatar_url": "",
+    "available": false,
+    "is_demo": false
+  },
+  "projects": [
+    {
+      "slug": "folio-os",
+      "title": "Portfolio OS",
+      "category": "Full stack",
+      "summary": "My desktop-inspired portfolio, built with React and Django REST Framework.",
+      "description": "An ongoing personal portfolio project with a React and TypeScript frontend and a modular Django REST Framework backend. It includes desktop-style navigation, project search, admin-managed content, a contact inbox, and configurable resume content. The frontend has a private hosted preview; the complete Django application currently runs locally, with a production deployment configuration prepared.",
+      "technologies": [
+        "React",
+        "TypeScript",
+        "Python",
+        "Django",
+        "Django REST Framework"
+      ],
+      "year": 2026,
+      "featured": true,
+      "accent": "blue",
+      "image_url": "",
+      "live_url": "",
+      "source_url": ""
+    }
+  ],
+  "skills": [],
+  "experience": [],
+  "education": [],
+  "certificates": [],
+  "resume": null
+}

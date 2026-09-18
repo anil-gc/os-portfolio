@@ -1,0 +1,186 @@
+{
+  "profile": {
+    "name": "Anil GC",
+    "headline": "Full-stack developer",
+    "location": "Kathmandu, Nepal",
+    "intro": "Thoughtful interfaces.\nReliable foundations.",
+    "bio": "I turn complex problems into simple, useful digital experiences. From the first sketch to the last API endpoint, I care about the details that make software feel right.",
+    "about": "I'm a developer who enjoys working at the intersection of thoughtful design and dependable engineering. I build accessible interfaces, well-structured APIs, and products that people enjoy using.\n\nAway from the keyboard, you'll find me exploring new places, collecting ideas, and looking for the next interesting problem.",
+    "email": "hello@example.com",
+    "github_url": "",
+    "linkedin_url": "",
+    "available": true,
+    "is_demo": true,
+    "avatar_url": ""
+  },
+  "projects": [
+    {
+      "slug": "folio-os",
+      "title": "Folio OS",
+      "category": "Full stack",
+      "summary": "A personal corner of the internet, reimagined as a desktop.",
+      "description": "An operating-system-inspired portfolio with a responsive workspace, searchable projects, and a Django-powered content dashboard. A sample case study for this portfolio.",
+      "technologies": [
+        "React",
+        "Django",
+        "TypeScript"
+      ],
+      "year": 2026,
+      "featured": true,
+      "accent": "blue",
+      "image_url": "",
+      "live_url": "",
+      "source_url": ""
+    },
+    {
+      "slug": "fieldnotes",
+      "title": "Fieldnotes",
+      "category": "Web app",
+      "summary": "A quieter place to collect ideas and find your focus.",
+      "description": "A sample writing workspace exploring distraction-free editing, searchable notebooks, and a carefully considered reading experience.",
+      "technologies": [
+        "React",
+        "TypeScript",
+        "PostgreSQL"
+      ],
+      "year": 2026,
+      "featured": true,
+      "accent": "green",
+      "image_url": "",
+      "live_url": "",
+      "source_url": ""
+    },
+    {
+      "slug": "atlas-api",
+      "title": "Atlas API",
+      "category": "Backend",
+      "summary": "A dependable foundation for location-based experiences.",
+      "description": "A sample REST API project exploring versioned endpoints, structured validation, pagination, and clear developer documentation.",
+      "technologies": [
+        "Python",
+        "Django REST",
+        "PostgreSQL"
+      ],
+      "year": 2025,
+      "featured": true,
+      "accent": "violet",
+      "image_url": "",
+      "live_url": "",
+      "source_url": ""
+    },
+    {
+      "slug": "form-and-function",
+      "title": "Form & Function",
+      "category": "Web app",
+      "summary": "An accessible component system for everyday products.",
+      "description": "A sample design-system project bringing together reusable React components, accessible interactions, and a consistent visual language.",
+      "technologies": [
+        "React",
+        "CSS",
+        "TypeScript"
+      ],
+      "year": 2025,
+      "featured": false,
+      "accent": "orange",
+      "image_url": "",
+      "live_url": "",
+      "source_url": ""
+    }
+  ],
+  "skills": [
+    {
+      "name": "Python",
+      "category": "Backend",
+      "level": "Advanced"
+    },
+    {
+      "name": "Django",
+      "category": "Backend",
+      "level": "Advanced"
+    },
+    {
+      "name": "Django REST Framework",
+      "category": "Backend",
+      "level": "Advanced"
+    },
+    {
+      "name": "React",
+      "category": "Frontend",
+      "level": "Advanced"
+    },
+    {
+      "name": "TypeScript",
+      "category": "Frontend",
+      "level": "Proficient"
+    },
+    {
+      "name": "HTML & CSS",
+      "category": "Frontend",
+      "level": "Advanced"
+    },
+    {
+      "name": "PostgreSQL",
+      "category": "Tools & data",
+      "level": "Proficient"
+    },
+    {
+      "name": "Git",
+      "category": "Tools & data",
+      "level": "Advanced"
+    },
+    {
+      "name": "Docker",
+      "category": "Tools & data",
+      "level": "Proficient"
+    }
+  ],
+  "experience": [
+    {
+      "role": "Full-stack Developer",
+      "company": "Sample Studio",
+      "location": "Remote",
+      "start_date": "2024-06-01",
+      "end_date": null,
+      "description": "Built responsive product interfaces and REST APIs. Collaborated across design and engineering, improved accessibility, and maintained automated test coverage."
+    },
+    {
+      "role": "Frontend Developer",
+      "company": "Example Digital",
+      "location": "Kathmandu",
+      "start_date": "2022-08-01",
+      "end_date": "2024-05-01",
+      "description": "Developed reusable React components and delivered responsive websites. Worked with designers to turn early concepts into usable products."
+    }
+  ],
+  "education": [
+    {
+      "degree": "BSc in Computer Science",
+      "institution": "Example University",
+      "location": "Kathmandu, Nepal",
+      "start_date": "2019-08-01",
+      "end_date": "2023-06-01",
+      "description": "Sample education record. Coursework in software engineering, databases, and web technologies."
+    }
+  ],
+  "certificates": [
+    {
+      "title": "Responsive Web Design",
+      "issuer": "Example Learning",
+      "issued_date": "2024-03-01",
+      "credential_url": "",
+      "description": "Sample certificate covering accessible, responsive web interfaces."
+    },
+    {
+      "title": "Backend API Development",
+      "issuer": "Example Academy",
+      "issued_date": "2025-01-01",
+      "credential_url": "",
+      "description": "Sample certificate covering API architecture, testing, and deployment."
+    }
+  ],
+  "resume": {
+    "title": "Anil GC - Resume",
+    "summary": "Full-stack developer focused on accessible web experiences and dependable APIs.",
+    "file_url": ""
+  }
+}

@@ -1,0 +1,74 @@
+services:
+  database:
+    image: postgres:17-alpine
+    environment:
+      POSTGRES_DB: portfolio
+      POSTGRES_USER: portfolio
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD}
+    volumes:
+      - database:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U portfolio -d portfolio"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    restart: unless-stopped
+
+  cache:
+    image: redis:8-alpine
+    command: ["redis-server", "--save", "", "--appendonly", "no"]
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+    restart: unless-stopped
+
+  backend:
+    build: .
+    environment:
+      DJANGO_SETTINGS_MODULE: config.settings.production
+      DJANGO_SECRET_KEY: ${DJANGO_SECRET_KEY:?Set DJANGO_SECRET_KEY}
+      DJANGO_ALLOWED_HOSTS: ${PORTFOLIO_DOMAIN:?Set PORTFOLIO_DOMAIN}
+      DJANGO_CSRF_TRUSTED_ORIGINS: https://${PORTFOLIO_DOMAIN}
+      DATABASE_URL: postgresql://portfolio:${POSTGRES_PASSWORD}@database:5432/portfolio
+      CACHE_URL: redis://cache:6379/1
+      DJANGO_TRUST_PROXY_SSL_HEADER: "True"
+      DJANGO_SECURE_HSTS_SECONDS: "3600"
+      DJANGO_SECURE_HSTS_INCLUDE_SUBDOMAINS: "False"
+      DJANGO_SECURE_HSTS_PRELOAD: "False"
+    depends_on:
+      database:
+        condition: service_healthy
+      cache:
+        condition: service_healthy
+    volumes:
+      - staticfiles:/app/staticfiles
+      - media:/app/media
+    restart: unless-stopped
+
+  web:
+    build:
+      context: .
+      dockerfile: deploy/Dockerfile.web
+    environment:
+      PORTFOLIO_DOMAIN: ${PORTFOLIO_DOMAIN:?Set PORTFOLIO_DOMAIN}
+    ports:
+      - "80:80"
+      - "443:443"
+      - "443:443/udp"
+    depends_on:
+      - backend
+    volumes:
+      - staticfiles:/srv/django-static:ro
+      - media:/srv/media:ro
+      - caddy-data:/data
+      - caddy-config:/config
+    restart: unless-stopped
+
+volumes:
+  database:
+  staticfiles:
+  media:
+  caddy-data:
+  caddy-config:
