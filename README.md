@@ -18,6 +18,7 @@ admin account already prepared. Local URLs:
 
 - React: http://127.0.0.1:5173/
 - Django admin: http://127.0.0.1:8000/admin/
+- Custom dashboard: http://127.0.0.1:8000/dashboard/
 - Public portfolio: http://127.0.0.1:8000/api/v1/portfolio/site/
 - Health: http://127.0.0.1:8000/api/v1/core/health/
 
@@ -50,6 +51,68 @@ Seeding is transactional and refuses to overwrite an existing profile. It is
 optional: you can enter all your content directly in admin instead.
 
 ## Edit the Portfolio
+
+### Custom Dashboard (Tasks 1, 2 and 3)
+
+Open `/dashboard/` on the Django server and sign in with your existing active
+staff account. The custom sign-in page, responsive workspace shell, accessible
+mobile navigation, and POST-only logout are implemented. The overview shows live
+project, skill, certificate, experience, and contact-message totals, including
+published/draft counts and unread messages. Recent lists show up to four projects
+by modification date and four messages by submission date. Message email addresses
+and bodies are not fetched or shown on the overview.
+
+Summaries and recent content require the corresponding view or change permission.
+Projects are managed directly in the custom dashboard; other quick actions open
+existing Django admin forms with the relevant permissions. The profile action
+offers setup if no profile exists. Counts use one aggregate query per model; recent lists are
+limited queries with only the displayed fields. No dashboard caching is added.
+
+Every dashboard content view uses `DashboardAccessMixin` to enforce active staff
+access on the server. Future views can declare `permission_required` using existing
+Django model permissions. Anonymous users go to login; unauthorized users get 403.
+Login and logout use Django sessions and CSRF protection. Private responses are
+not cached. Failed sign-ins are limited to 10 per client IP per five-minute cache
+window; this is best-effort abuse control, shared across workers when Redis is used.
+
+`DASHBOARD_PUBLIC_SITE_URL` controls the "View portfolio" links: local settings
+default to `http://127.0.0.1:5173/`, and production defaults to `/`. Start the React
+development server separately to use those links locally. The dashboard itself
+needs only Django and its app-local static assets; no frontend build is required.
+
+The first dashboard task adds no models, migrations, or dependencies. It does not
+change existing portfolio records or the public API. Dashboard tests run with:
+
+```powershell
+.venv\Scripts\python.exe manage.py test apps.dashboard
+```
+
+### Manage Content in Django Admin
+
+Projects can now be managed without Django admin:
+
+- `/dashboard/projects/`: all projects, search by title/category, publication
+  filters, and pagination (10 per page), ordered by display order then ID.
+- `/dashboard/projects/new/`: create a project.
+- `/dashboard/projects/<id>/edit/`: edit all existing model fields.
+- `/dashboard/projects/<id>/delete/`: review confirmation, then delete with POST.
+
+Listing requires `view_project` or `change_project`; create, edit, and delete
+require `add_project`, `change_project`, and `delete_project` respectively, in
+addition to active staff access. Mutations require CSRF-protected POSTs. The shared
+ModelForm validates fields on the server. Technologies use one entry per line;
+an empty slug is generated from the title and duplicate slugs show a field error.
+
+The existing model stores `image_url`, not an uploaded file. The dashboard supports
+HTTP/HTTPS image URLs, previews, replacement, and clearing; it does not upload or
+delete files. Keep the current URL unchanged to retain an image.
+
+Publishing writes to the same Project records used by both public APIs. Drafts
+stay private. The public frontend loads current data on page load, manual refresh,
+and when returning to a visible/focused tab. No rebuild is required for content
+changes. A disconnected static preview still cannot synchronize with the database.
+
+The existing Django admin remains available for all content:
 
 1. Open Django admin and update the single profile, including name, headline,
    location, intro, bio, about text, email, social links, avatar URL, and availability.

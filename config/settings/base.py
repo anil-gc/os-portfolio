@@ -31,6 +31,7 @@ THIRD_PARTY_APPS = [
 
 LOCAL_APPS = [
     "apps.core",
+    "apps.dashboard",
     "apps.portfolio",
     "apps.projects",
     "apps.skills",
@@ -105,6 +106,10 @@ MEDIA_URL = env("DJANGO_MEDIA_URL", default="/media/")
 MEDIA_ROOT = Path(env("DJANGO_MEDIA_ROOT", default=str(BASE_DIR / "media")))
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+
+DASHBOARD_PUBLIC_SITE_URL = env("DASHBOARD_PUBLIC_SITE_URL", default="/")
+# Enable only behind a proxy that overwrites X-Real-IP and blocks direct access.
+DASHBOARD_TRUST_PROXY_IP = env.bool("DASHBOARD_TRUST_PROXY_IP", default=False)
 
 REST_FRAMEWORK = {
     "DEFAULT_THROTTLE_RATES": {"contact": "5/hour"},

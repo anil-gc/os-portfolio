@@ -1,0 +1,43 @@
+{% extends 'dashboard/base.html' %}
+{% block title %}Sign in{% endblock %}
+{% block body_class %}auth-page{% endblock %}
+{% block body %}
+  <div class="auth-layout">
+    <aside class="auth-story" aria-label="Portfolio workspace">
+      <div class="brand">{% include 'dashboard/partials/brand.html' %}</div>
+      <div class="auth-story-copy">
+        <span class="eyebrow">A SPACE OF YOUR OWN</span>
+        <h2>Good work.<br>A great story.<br><span>All yours.</span></h2>
+        <p>A thoughtful home for the work you create<br class="desktop-only"> and the story you're building.</p>
+        <div class="story-art" aria-hidden="true">
+          <div class="art-orbit"></div>
+          <div class="art-tile art-tile-back">{% include 'dashboard/partials/icon.html' with name='spark' %}</div>
+          <div class="art-tile art-tile-front">{% include 'dashboard/partials/icon.html' with name='folder' %}</div>
+          <div class="art-dot"></div>
+          <span class="art-caption">A little more you.</span>
+        </div>
+      </div>
+      <p class="story-footer">MADE TO GROW WITH YOU <span>Portfolio OS</span></p>
+    </aside>
+    <main id="main-content" class="auth-main" tabindex="-1">
+      <div class="auth-form-wrap">
+        <div class="auth-icon">{% include 'dashboard/partials/icon.html' with name='lock' %}</div>
+        <span class="eyebrow">YOUR PRIVATE WORKSPACE</span>
+        <h1>Welcome back.</h1>
+        <p class="auth-intro">Sign in to your portfolio dashboard.</p>
+        {% include 'dashboard/partials/alerts.html' %}
+        {% if rate_limited %}<div class="alert alert-error" role="alert">Too many sign-in attempts. Please wait five minutes and try again.</div>{% endif %}
+        {% if form.non_field_errors %}<div class="alert alert-error" role="alert">{{ form.non_field_errors }}</div>{% endif %}
+        <form method="post" action="{% url 'dashboard:login' %}" class="login-form">
+          {% csrf_token %}
+          <input type="hidden" name="next" value="{{ next }}">
+          {% include 'dashboard/partials/field.html' with field=form.username %}
+          {% include 'dashboard/partials/field.html' with field=form.password %}
+          <button class="button button-primary login-submit" type="submit">Sign in {% include 'dashboard/partials/icon.html' with name='right' %}</button>
+        </form>
+        <p class="auth-note">{% include 'dashboard/partials/icon.html' with name='lock' %} Access is reserved for authorized staff.</p>
+      </div>
+      <p class="auth-footer">Your work. Your story. Your space.</p>
+    </main>
+  </div>
+{% endblock %}

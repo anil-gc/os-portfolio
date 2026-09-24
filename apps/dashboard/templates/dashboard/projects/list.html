@@ -1,0 +1,50 @@
+{% extends 'dashboard/projects/base.html' %}
+{% block title %}Projects{% endblock %}
+{% block content %}
+  <div class="page-heading project-heading">
+    <div><span class="eyebrow">YOUR WORK, IN ONE PLACE</span><h1>Projects</h1><p>Build your collection. Choose what to share with the world.</p></div>
+    {% if perms.projects.add_project %}<a class="button button-primary" href="{% url 'dashboard:project-create' %}">{% include 'dashboard/partials/icon.html' with name='plus' %} Add project</a>{% endif %}
+  </div>
+  <form method="get" class="project-filters" role="search" aria-label="Filter projects">
+    <div><label for="project-search">Search projects</label><input id="project-search" name="q" type="search" value="{{ query }}" maxlength="160" placeholder="Search title or category"></div>
+    <div><label for="project-status">Publication status</label><select name="status" id="project-status"><option value="">All statuses</option><option value="published" {% if status_filter == 'published' %}selected{% endif %}>Published</option><option value="draft" {% if status_filter == 'draft' %}selected{% endif %}>Draft</option></select></div>
+    <button class="button button-secondary" type="submit">Apply filters</button>
+    {% if query or status_filter %}<a class="button button-secondary" href="{% url 'dashboard:project-list' %}">Clear</a>{% endif %}
+  </form>
+  <div class="section-heading"><h2>{{ paginator.count }} project{{ paginator.count|pluralize }}{% if query or status_filter %} found{% endif %}</h2><span>Sorted by display order</span></div>
+  {% if projects %}
+    <div class="project-management-grid">
+      {% for project in projects %}
+        <article class="managed-project">
+          <div class="managed-project-main">
+            <div class="managed-project-image">{% if project.image_url %}<img src="{{ project.image_url }}" alt="" width="88" height="88" loading="lazy" referrerpolicy="no-referrer">{% else %}{% include 'dashboard/partials/icon.html' with name='folder' %}{% endif %}</div>
+            <div class="managed-project-copy"><h2>{{ project.title }}</h2><p>{{ project.category }} &middot; {{ project.year }}</p><div class="status-list"><span class="status-badge {% if project.is_published %}status-published{% else %}status-draft{% endif %}">{% if project.is_published %}Published{% else %}Draft{% endif %}</span>{% if project.featured %}<span class="status-badge status-featured">Featured</span>{% endif %}</div></div>
+          </div>
+          <p class="project-summary">{{ project.summary }}</p>
+          <ul class="technology-tags" aria-label="Technologies">{% for technology in project.technologies %}<li>{{ technology }}</li>{% empty %}<li class="no-technologies">No technologies added</li>{% endfor %}</ul>
+          <p class="project-metadata">Order {{ project.sort_order }} <span aria-hidden="true">&middot;</span> Updated <time datetime="{{ project.updated_at|date:'c' }}">{{ project.updated_at|date:'M j, Y' }}</time></p>
+          <div class="project-card-actions">
+            {% if perms.projects.change_project %}<a class="button button-secondary" href="{% url 'dashboard:project-update' project.pk %}">{% include 'dashboard/partials/icon.html' with name='edit' %} Edit<span class="sr-only"> {{ project.title }}</span></a>{% endif %}
+            {% if project.is_published %}<a class="button button-secondary" href="{{ public_portfolio_url }}#projects/{{ project.slug }}" target="_blank" rel="noopener noreferrer">View public {% include 'dashboard/partials/icon.html' with name='arrow' %}<span class="sr-only"> {{ project.title }} (opens in a new tab)</span></a>{% endif %}
+            {% if perms.projects.delete_project %}<a class="button button-danger-outline" href="{% url 'dashboard:project-delete' project.pk %}">{% include 'dashboard/partials/icon.html' with name='trash' %} Delete<span class="sr-only"> {{ project.title }}</span></a>{% endif %}
+          </div>
+        </article>
+      {% endfor %}
+    </div>
+    {% if is_paginated %}<nav class="project-pagination" aria-label="Project pages">
+      {% if page_obj.has_previous %}<a class="button button-secondary" href="?{{ filter_query }}&amp;page={{ page_obj.previous_page_number }}">Previous</a>{% endif %}
+      <span>Page {{ page_obj.number }} of {{ paginator.num_pages }}</span>
+      {% if page_obj.has_next %}<a class="button button-secondary" href="?{{ filter_query }}&amp;page={{ page_obj.next_page_number }}">Next</a>{% endif %}
+    </nav>{% endif %}
+  {% else %}
+    <section class="overview-panel project-empty">
+      {% if query or status_filter %}
+        {% include 'dashboard/partials/empty_state.html' with icon='folder' title='No matching projects' description='Try another title, category, or publication status.' only %}
+        <a class="button button-secondary" href="{% url 'dashboard:project-list' %}">Clear filters</a>
+      {% else %}
+        {% include 'dashboard/partials/empty_state.html' with icon='folder' title='No projects yet' description='Add your first project to showcase it on your portfolio.' only %}
+        {% if perms.projects.add_project %}<a class="button button-primary" href="{% url 'dashboard:project-create' %}">Add project</a>{% endif %}
+      {% endif %}
+    </section>
+  {% endif %}
+{% endblock %}

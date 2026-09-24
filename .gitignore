@@ -16,5 +16,6 @@ frontend/.wrangler/
 frontend/.vinext/
 frontend/.next/
 *.log
+/output/playwright/
 .env.*
 !.env.example

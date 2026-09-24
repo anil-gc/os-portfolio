@@ -1,0 +1,1 @@
+<a class="button button-secondary" href="{% if perms.projects.view_project or perms.projects.change_project %}{% url 'dashboard:project-list' %}{% else %}{% url 'dashboard:home' %}{% endif %}">Cancel</a>

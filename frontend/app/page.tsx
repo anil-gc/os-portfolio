@@ -192,6 +192,23 @@ export default function Portfolio() {
   }, [reload]);
 
   useEffect(() => {
+    // Recheck the existing API when returning from the CMS, without a rebuild.
+    let timer: ReturnType<typeof setTimeout>;
+    const refresh = () => {
+      if (document.visibilityState !== 'visible') return;
+      clearTimeout(timer);
+      timer = setTimeout(() => setReload((value) => value + 1), 150);
+    };
+    window.addEventListener('focus', refresh);
+    document.addEventListener('visibilitychange', refresh);
+    return () => {
+      clearTimeout(timer);
+      window.removeEventListener('focus', refresh);
+      document.removeEventListener('visibilitychange', refresh);
+    };
+  }, []);
+
+  useEffect(() => {
     const tick = () =>
       setClock(
         new Intl.DateTimeFormat('en', {

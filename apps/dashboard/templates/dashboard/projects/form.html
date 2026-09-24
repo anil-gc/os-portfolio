@@ -1,0 +1,37 @@
+{% extends 'dashboard/projects/base.html' %}
+{% block title %}{% if object %}Edit project{% else %}Add project{% endif %}{% endblock %}
+{% block content %}
+  <div class="page-heading"><div><span class="eyebrow">PROJECT DETAILS</span><h1>{% if object %}Edit project{% else %}Add project{% endif %}</h1><p>{% if object %}Update {{ object.title }}.{% else %}Tell the story behind your work.{% endif %} Fields marked * are required.</p></div></div>
+  <form method="post" class="project-form" novalidate>
+    {% csrf_token %}
+    {% if form.errors %}<div class="alert alert-error" role="alert"><div><strong>Please fix the highlighted fields.</strong>{{ form.non_field_errors }}<ul>{% for field in form %}{% if field.errors %}<li><a href="#{{ field.id_for_label }}">{{ field.label }}: {{ field.errors|striptags }}</a></li>{% endif %}{% endfor %}</ul></div></div>{% endif %}
+    <div class="project-form-grid">
+      <div class="project-form-main">
+        <fieldset class="form-panel"><legend>About the project</legend>
+          {% include 'dashboard/partials/field.html' with field=form.title %}
+          {% include 'dashboard/partials/field.html' with field=form.slug %}
+          <div class="form-columns">{% include 'dashboard/partials/field.html' with field=form.category %}{% include 'dashboard/partials/field.html' with field=form.year %}</div>
+          {% include 'dashboard/partials/field.html' with field=form.summary %}
+          {% include 'dashboard/partials/field.html' with field=form.description %}
+          {% include 'dashboard/partials/field.html' with field=form.technologies %}
+        </fieldset>
+        <fieldset class="form-panel"><legend>Links and image</legend>
+          {% include 'dashboard/partials/field.html' with field=form.source_url %}
+          {% include 'dashboard/partials/field.html' with field=form.live_url %}
+          {% include 'dashboard/partials/field.html' with field=form.image_url %}
+          <div class="project-image-preview"><img data-image-preview hidden alt="Project image preview" referrerpolicy="no-referrer"><p data-image-preview-status aria-live="polite">Enter an image URL to preview it.</p><noscript>Save the image URL to see it on the project list.</noscript></div>
+        </fieldset>
+      </div>
+      <div>
+        <fieldset class="form-panel"><legend>Display and publishing</legend>
+          {% include 'dashboard/partials/field.html' with field=form.accent %}
+          {% include 'dashboard/partials/field.html' with field=form.sort_order %}
+          {% include 'dashboard/projects/toggle_field.html' with field=form.featured %}
+          {% include 'dashboard/projects/toggle_field.html' with field=form.is_published %}
+        </fieldset>
+        <div class="project-form-note">Published projects appear on your public portfolio. Drafts remain private. Changes save only when you select Save project.</div>
+      </div>
+    </div>
+    <div class="form-actions"><button type="submit" class="button button-primary">Save project</button>{% include 'dashboard/projects/cancel.html' %}</div>
+  </form>
+{% endblock %}

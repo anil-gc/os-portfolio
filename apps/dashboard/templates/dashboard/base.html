@@ -1,0 +1,19 @@
+{% load static %}
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="robots" content="noindex, nofollow">
+    <meta name="color-scheme" content="light">
+    <title>{% block title %}Workspace{% endblock %} | Portfolio OS</title>
+    <link rel="icon" href="{% static 'dashboard/favicon.svg' %}" type="image/svg+xml">
+    <link rel="stylesheet" href="{% static 'dashboard/dashboard.css' %}?v=2">
+    <script src="{% static 'dashboard/dashboard.js' %}" defer></script>
+    {% block extra_assets %}{% endblock %}
+  </head>
+  <body class="{% block body_class %}{% endblock %}">
+    <a class="skip-link" href="#main-content">Skip to content</a>
+    {% block body %}{% endblock %}
+  </body>
+</html>

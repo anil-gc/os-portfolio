@@ -1,0 +1,4 @@
+<a class="stat-card" href="{{ stat.url }}">
+  <div class="stat-heading"><span class="card-icon card-icon-{{ stat.tone }}">{% include 'dashboard/partials/icon.html' with name=stat.icon %}</span>{% include 'dashboard/partials/icon.html' with name='right' %}</div>
+  <h3>{{ stat.label }}</h3><span class="stat-value">{{ stat.total }}</span><p>{{ stat.detail }}</p>
+</a>

@@ -1,0 +1,61 @@
+{% extends 'dashboard/shell.html' %}
+{% block title %}Overview{% endblock %}
+{% block content %}
+  <div class="page-heading">
+    <div><span class="eyebrow">YOUR WORKSPACE AT A GLANCE</span><h1>Portfolio overview</h1><p>Welcome to your workspace. Here's where things stand.</p></div>
+    <span class="private-badge">{% include 'dashboard/partials/icon.html' with name='lock' %} Only you and your team</span>
+  </div>
+
+  <section aria-labelledby="summary-title">
+    <div class="section-heading"><h2 id="summary-title">Content summary</h2><span>Live totals, including drafts</span></div>
+    <div class="stats-grid">
+      {% for stat in stats %}{% include 'dashboard/partials/stat_card.html' with stat=stat only %}
+      {% empty %}{% include 'dashboard/partials/empty_state.html' with icon='lock' title='Your workspace is ready' description='Ask your administrator for content permissions to see summaries and recent content here.' only %}{% endfor %}
+    </div>
+  </section>
+
+  <section class="overview-section quick-actions" aria-labelledby="actions-title">
+    <div class="section-heading"><h2 id="actions-title">Quick actions</h2></div>
+    {% if quick_actions %}<p class="section-description">Manage projects here. Other content opens in Django admin.</p>{% endif %}
+    <div class="quick-actions-list">
+      {% for action in quick_actions %}<a class="button button-secondary" href="{{ action.url }}">{% include 'dashboard/partials/icon.html' with name=action.icon %} {{ action.label }}</a>{% endfor %}
+      <a class="button button-primary" href="{{ public_portfolio_url }}" target="_blank" rel="noopener noreferrer">View portfolio {% include 'dashboard/partials/icon.html' with name='arrow' %}<span class="sr-only"> (opens in a new tab)</span></a>
+    </div>
+  </section>
+
+  <div class="recent-grid{% if not show_projects or not show_messages %} recent-grid-single{% endif %}">
+    {% if show_projects %}
+      <section class="overview-panel" aria-labelledby="projects-title">
+        <div class="panel-heading"><div><h2 id="projects-title">Recent projects</h2><p>Your four most recently updated projects.</p></div><a class="text-link" href="{% url 'dashboard:project-list' %}">View all<span class="sr-only"> projects</span> {% include 'dashboard/partials/icon.html' with name='right' %}</a></div>
+        {% if recent_projects %}
+          <ul class="recent-list">
+            {% for project in recent_projects %}
+              <li><a class="recent-item project-item" href="{% if perms.projects.change_project %}{% url 'dashboard:project-update' project.pk %}{% else %}{% url 'dashboard:project-list' %}{% endif %}">
+                <span class="project-thumbnail">{% if project.image_url %}<img src="{{ project.image_url }}" alt="" width="52" height="52" loading="lazy" referrerpolicy="no-referrer">{% else %}{% include 'dashboard/partials/icon.html' with name='folder' %}{% endif %}</span>
+                <div class="recent-copy"><h3>{{ project.title }}</h3><p>Updated <time datetime="{{ project.updated_at|date:'c' }}">{{ project.updated_at|date:'M j, Y' }}</time></p><div class="status-list"><span class="status-badge {% if project.is_published %}status-published{% else %}status-draft{% endif %}">{% if project.is_published %}Published{% else %}Draft{% endif %}</span>{% if project.featured %}<span class="status-badge status-featured">{% include 'dashboard/partials/icon.html' with name='spark' %} Featured</span>{% endif %}</div></div>
+                <span class="recent-arrow">{% include 'dashboard/partials/icon.html' with name='right' %}</span>
+              </a></li>
+            {% endfor %}
+          </ul>
+        {% else %}{% include 'dashboard/partials/empty_state.html' with icon='folder' title='Your next project starts here' description='No projects yet. Add your first project when you are ready to share your work.' only %}{% endif %}
+      </section>
+    {% endif %}
+
+    {% if show_messages %}
+      <section class="overview-panel" aria-labelledby="messages-title">
+        <div class="panel-heading"><div><h2 id="messages-title">Recent messages <span class="count-badge">{{ unread_messages }} unread</span></h2><p>The latest from your contact form.</p></div><a class="text-link" href="{% url 'admin:contact_message_changelist' %}">View all<span class="sr-only"> messages in Django admin</span> {% include 'dashboard/partials/icon.html' with name='right' %}</a></div>
+        {% if recent_messages %}
+          <ul class="recent-list">
+            {% for message in recent_messages %}
+              <li><a class="recent-item message-item" href="{% url 'admin:contact_message_change' message.pk %}">
+                <span class="sender-avatar" aria-hidden="true">{{ message.name|first|upper }}</span>
+                <div class="recent-copy"><h3>{{ message.name }}</h3><p class="message-subject">{{ message.subject|truncatechars:100 }}</p><div class="message-meta"><time datetime="{{ message.created_at|date:'c' }}">{{ message.created_at|date:'M j, Y' }}</time><span class="status-badge {% if not message.is_read %}status-unread{% else %}status-draft{% endif %}">{% if message.is_read %}Read{% else %}Unread{% endif %}</span></div></div>
+                <span class="recent-arrow">{% include 'dashboard/partials/icon.html' with name='right' %}</span>
+              </a></li>
+            {% endfor %}
+          </ul>
+        {% else %}{% include 'dashboard/partials/empty_state.html' with icon='mail' title='A quiet inbox' description='No messages yet. New contact form submissions will appear here.' only %}{% endif %}
+      </section>
+    {% endif %}
+  </div>
+{% endblock %}

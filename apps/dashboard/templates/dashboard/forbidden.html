@@ -1,0 +1,12 @@
+{% extends 'dashboard/base.html' %}
+{% block title %}Access restricted{% endblock %}
+{% block body_class %}forbidden-page{% endblock %}
+{% block body %}
+  <main id="main-content" class="forbidden-card" tabindex="-1">
+    <span class="auth-icon">{% include 'dashboard/partials/icon.html' with name='lock' %}</span>
+    <span class="eyebrow">PRIVATE WORKSPACE</span>
+    <h1>Access restricted.</h1>
+    <p>You need an active staff account with the appropriate permissions to open this page.</p>
+    <a class="button button-primary" href="{% url 'dashboard:login' %}">Go to sign in {% include 'dashboard/partials/icon.html' with name='right' %}</a>
+  </main>
+{% endblock %}

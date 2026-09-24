@@ -34,6 +34,7 @@ services:
       DATABASE_URL: postgresql://portfolio:${POSTGRES_PASSWORD}@database:5432/portfolio
       CACHE_URL: redis://cache:6379/1
       DJANGO_TRUST_PROXY_SSL_HEADER: "True"
+      DASHBOARD_TRUST_PROXY_IP: "True"
       DJANGO_SECURE_HSTS_SECONDS: "3600"
       DJANGO_SECURE_HSTS_INCLUDE_SUBDOMAINS: "False"
       DJANGO_SECURE_HSTS_PRELOAD: "False"

@@ -5,9 +5,11 @@
         Referrer-Policy strict-origin-when-cross-origin
         X-Frame-Options DENY
     }
-    @django path /api/* /admin /admin/*
+    @django path /api/* /admin /admin/* /dashboard /dashboard/*
     handle @django {
-        reverse_proxy backend:8000
+        reverse_proxy backend:8000 {
+            header_up X-Real-IP {remote_host}
+        }
     }
     handle_path /static/* {
         root * /srv/django-static

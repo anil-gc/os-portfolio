@@ -50,6 +50,20 @@ public pages. Contact submissions appear in the admin inbox; no external mail
 provider is required. Resume PDF files persist in the media volume. Backend, cache,
 and database ports are internal to the Docker network.
 
+The custom dashboard is available at `https://YOUR_DOMAIN/dashboard/`, using the
+same active staff accounts. It includes sign-in/out, the responsive overview, and
+custom project management. Other content editing remains in Django Admin.
+Rebuild the backend image and run `collectstatic` when updating dashboard templates
+or assets. Rebuild the web image to pick up the `/dashboard` Caddy route.
+
+Caddy overwrites `X-Real-IP` with the connecting client's address. Compose enables
+`DASHBOARD_TRUST_PROXY_IP` so login throttling uses that trusted address. Keep this
+setting false if Django is directly reachable, and do not trust client-supplied
+headers. Adding another proxy/CDN requires reviewing the trusted client-IP setup.
+The existing Redis cache shares sign-in failure counters between workers. Dashboard
+public-site links default to `/` in production; override `DASHBOARD_PUBLIC_SITE_URL`
+only if the public frontend lives at another URL.
+
 ## Before Announcing the Site
 
 - Replace all dummy content, links, and the example email. Confirm projects and

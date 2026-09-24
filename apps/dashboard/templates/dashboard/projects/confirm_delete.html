@@ -1,0 +1,10 @@
+{% extends 'dashboard/projects/base.html' %}
+{% block title %}Delete project{% endblock %}
+{% block content %}
+  <div class="page-heading"><div><span class="eyebrow">CONFIRM DELETION</span><h1>Delete project?</h1><p>Review the project before you continue.</p></div></div>
+  <section class="delete-panel overview-panel">
+    <span class="delete-icon">{% include 'dashboard/partials/icon.html' with name='trash' %}</span>
+    <h2>{{ object.title }}</h2><p>Are you sure you want to delete this project? It will be removed from your dashboard and public portfolio. This cannot be undone.</p>
+    <form method="post">{% csrf_token %}<div class="form-actions"><button type="submit" class="button button-danger">Delete project</button>{% include 'dashboard/projects/cancel.html' %}</div></form>
+  </section>
+{% endblock %}

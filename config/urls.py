@@ -8,6 +8,7 @@ admin.site.site_title = "Portfolio admin"
 admin.site.index_title = "Content and messages"
 
 urlpatterns = [
+    path("dashboard/", include("apps.dashboard.urls")),
     path("admin/", admin.site.urls),
     path("api/v1/", include("config.api_urls", namespace="v1")),
 ]

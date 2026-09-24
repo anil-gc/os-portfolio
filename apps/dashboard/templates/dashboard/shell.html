@@ -1,0 +1,45 @@
+{% extends 'dashboard/base.html' %}
+{% block body_class %}workspace-page{% endblock %}
+{% block body %}
+  <div class="workspace-shell">
+    <aside class="sidebar" id="workspace-navigation" aria-label="Workspace navigation">
+      <div class="sidebar-brand-row">
+        <a class="brand" href="{% url 'dashboard:home' %}" aria-label="Portfolio OS dashboard">{% include 'dashboard/partials/brand.html' %}</a>
+        <button class="icon-button drawer-close" type="button" aria-label="Close navigation" data-drawer-close hidden>{% include 'dashboard/partials/icon.html' with name='close' %}</button>
+      </div>
+      <nav class="sidebar-nav" aria-label="Dashboard">
+        <p class="nav-caption">WORKSPACE</p>
+        <a class="nav-link{% if not dashboard_section %} active{% endif %}" href="{% url 'dashboard:home' %}" {% if not dashboard_section %}aria-current="page"{% endif %}>{% include 'dashboard/partials/icon.html' with name='grid' %} Overview {% if not dashboard_section %}<span class="nav-current-dot"></span>{% endif %}</a>
+        {% if perms.projects.view_project or perms.projects.change_project %}<a class="nav-link{% if dashboard_section == 'projects' %} active{% endif %}" href="{% url 'dashboard:project-list' %}" {% if dashboard_section == 'projects' %}aria-current="page"{% endif %}>{% include 'dashboard/partials/icon.html' with name='folder' %} Projects {% if dashboard_section == 'projects' %}<span class="nav-current-dot"></span>{% endif %}</a>{% endif %}
+      </nav>
+      <div class="sidebar-bottom">
+        <div class="sidebar-note">
+          <span class="mini-icon">{% include 'dashboard/partials/icon.html' with name='spark' %}</span>
+          <h2>A space to make your own.</h2>
+          <p>Your work deserves a thoughtful home.</p>
+          <a href="{{ public_portfolio_url }}" target="_blank" rel="noopener noreferrer">View your portfolio {% include 'dashboard/partials/icon.html' with name='arrow' %}<span class="sr-only"> (opens in a new tab)</span></a>
+        </div>
+        <div class="account-row">
+          <span class="account-avatar" aria-hidden="true">{{ user.get_username|first|upper }}</span>
+          <div class="account-copy"><strong>{{ user.get_short_name|default:user.get_username }}</strong><span>Staff account</span></div>
+          <form method="post" action="{% url 'dashboard:logout' %}">{% csrf_token %}<button class="icon-button" type="submit" aria-label="Sign out" title="Sign out">{% include 'dashboard/partials/icon.html' with name='logout' %}</button></form>
+        </div>
+      </div>
+    </aside>
+    <button class="drawer-backdrop" type="button" aria-label="Close navigation" tabindex="-1" data-drawer-close hidden></button>
+    <div class="workspace-main" data-workspace-main>
+      <header class="topbar">
+        <div class="topbar-heading">
+          <button class="icon-button menu-toggle" type="button" aria-label="Open navigation" aria-expanded="false" aria-controls="workspace-navigation" data-drawer-open hidden>{% include 'dashboard/partials/icon.html' with name='menu' %}</button>
+          <span class="breadcrumb-parent">Workspace</span><span class="breadcrumb-divider" aria-hidden="true">/</span><strong>{% if dashboard_section == 'projects' %}Projects{% else %}Overview{% endif %}</strong>
+        </div>
+        <a class="button button-small button-secondary" href="{{ public_portfolio_url }}" target="_blank" rel="noopener noreferrer">View portfolio {% include 'dashboard/partials/icon.html' with name='arrow' %}<span class="sr-only"> (opens in a new tab)</span></a>
+      </header>
+      <main id="main-content" class="workspace-content" tabindex="-1">
+        {% include 'dashboard/partials/alerts.html' %}
+        {% block content %}{% endblock %}
+      </main>
+      <footer class="workspace-footer"><span>Portfolio OS <span class="footer-dot" aria-hidden="true">&middot;</span> Your personal workspace</span><span>{% include 'dashboard/partials/icon.html' with name='lock' %} Private access</span></footer>
+    </div>
+  </div>
+{% endblock %}
