@@ -1,0 +1,8 @@
+.profile-preview { margin-bottom: 24px; color: var(--muted); font-size: 12px; }
+.profile-preview img { width: 104px; height: 104px; object-fit: cover; border-radius: 18px; margin-bottom: 12px; }
+.profile-form input[type="file"] { max-width: 100%; padding: 10px; height: auto; }
+.profile-form input[type="checkbox"] { width: 18px; height: 18px; }
+.profile-form .form-field { overflow-wrap: anywhere; }
+.profile-form .form-field > label { margin-top: 8px; }
+.profile-form .form-field > input[type="checkbox"] + label { display: inline; margin-left: 6px; font-weight: 400; }
+.profile-form .form-field a { color: var(--primary); text-decoration: underline; }

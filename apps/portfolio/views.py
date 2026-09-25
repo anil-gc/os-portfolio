@@ -27,7 +27,7 @@ class SiteView(APIView):
 
     def get(self, request):
         context = {"request": request}
-        data = {"profile": ProfileSerializer(get_object_or_404(Profile, pk=1)).data}
+        data = {"profile": ProfileSerializer(get_object_or_404(Profile, pk=1), context=context).data}
         for key, model, serializer in (
             ("projects", Project, ProjectSerializer),
             ("skills", Skill, SkillSerializer),

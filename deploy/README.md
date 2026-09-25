@@ -52,7 +52,16 @@ and database ports are internal to the Docker network.
 
 The custom dashboard is available at `https://YOUR_DOMAIN/dashboard/`, using the
 same active staff accounts. It includes sign-in/out, the responsive overview, and
-custom project management. Other content editing remains in Django Admin.
+custom project, skills, experience, education, certificates, and Profile/About
+management. `/dashboard/profile/` includes photo and current resume uploads.
+`/dashboard/messages/` provides the private contact inbox, explicit read/unread
+actions, and confirmed deletion. It reuses the public contact API's Message table;
+Task 7 adds no migration, service, or email delivery. Existing staff need contact
+view/change permission, with separate change/delete permissions for mutations.
+Install updated backend requirements, run migrations, and collect static files.
+The optional profile image uses the existing media volume; PDFs retain the
+attachment response policy. Public content now requires Django, with no bundled
+personal-data fallback. Django Admin remains available for all existing models.
 Rebuild the backend image and run `collectstatic` when updating dashboard templates
 or assets. Rebuild the web image to pick up the `/dashboard` Caddy route.
 

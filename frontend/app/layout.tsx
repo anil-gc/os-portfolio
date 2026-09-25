@@ -13,9 +13,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: 'Anil GC | Portfolio OS',
-  description:
-    "Explore Anil GC's Portfolio OS, a desktop-inspired portfolio built with React and Django REST Framework.",
+  title: 'Portfolio OS',
+  description: 'A personal portfolio workspace.',
   robots: { index: false, follow: false },
 };
 

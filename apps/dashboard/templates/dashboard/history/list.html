@@ -1,0 +1,59 @@
+{% extends 'dashboard/history/base.html' %}
+{% block title %}{{ section_title }}{% endblock %}
+{% block content %}
+  <div class="page-heading project-heading">
+    <div><span class="eyebrow">YOUR STORY, IN ONE PLACE</span><h1>{{ section_title }}</h1><p>{{ section_description }}</p></div>
+    {% if can_add %}<a class="button button-primary" href="{{ create_url }}">{% include 'dashboard/partials/icon.html' with name='plus' %} Add {{ entry_label }}</a>{% endif %}
+  </div>
+  <form method="get" class="project-filters" role="search" aria-label="Filter {{ section_title|lower }}">
+    <div><label for="entry-search">Search {{ section_title|lower }}</label><input id="entry-search" name="q" type="search" value="{{ query }}" maxlength="160" placeholder="Search title or organization"></div>
+    <div><label for="entry-status">Publication status</label><select name="status" id="entry-status"><option value="">All statuses</option><option value="published" {% if status_filter == 'published' %}selected{% endif %}>Published</option><option value="draft" {% if status_filter == 'draft' %}selected{% endif %}>Draft</option></select></div>
+    <button class="button button-secondary" type="submit">Apply filters</button>
+    {% if query or status_filter %}<a class="button button-secondary" href="{{ list_url }}">Clear</a>{% endif %}
+  </form>
+  <div class="section-heading"><h2>{{ paginator.count }} entr{{ paginator.count|pluralize:'y,ies' }}{% if query or status_filter %} found{% endif %}</h2><span>Sorted by display order</span></div>
+  {% if entries %}
+    <div class="project-management-grid">
+      {% for entry in entries %}
+        <article class="managed-project history-entry">
+          <div class="managed-project-main">
+            <span class="history-symbol">{% include 'dashboard/partials/icon.html' with name=section_icon %}</span>
+            <div class="managed-project-copy"><h2>{{ entry.title }}</h2><p>{{ entry.subtitle }}</p></div>
+          </div>
+          <div class="history-dates">
+            {% if dashboard_section == 'certificates' %}
+              Issued <time datetime="{{ entry.object.issued_date|date:'Y-m-d' }}">{{ entry.object.issued_date|date:'M j, Y' }}</time>
+            {% else %}
+              <time datetime="{{ entry.object.start_date|date:'Y-m-d' }}">{{ entry.object.start_date|date:'M j, Y' }}</time> &ndash; {% if entry.object.end_date %}<time datetime="{{ entry.object.end_date|date:'Y-m-d' }}">{{ entry.object.end_date|date:'M j, Y' }}</time>{% else %}Present{% endif %}
+              {% if entry.object.location %}<p>{{ entry.object.location }}</p>{% endif %}
+            {% endif %}
+          </div>
+          <div class="status-list">
+            <span class="status-badge {% if entry.object.is_published %}status-published{% else %}status-draft{% endif %}">{% if entry.object.is_published %}Published{% else %}Draft{% endif %}</span>
+            {% if dashboard_section != 'certificates' and not entry.object.end_date %}<span class="status-badge status-featured">{% if dashboard_section == 'experience' %}Current role{% else %}Ongoing{% endif %}</span>{% endif %}
+          </div>
+          <p class="project-metadata">Order {{ entry.object.sort_order }} <span aria-hidden="true">&middot;</span> Updated <time datetime="{{ entry.object.updated_at|date:'c' }}">{{ entry.object.updated_at|date:'M j, Y' }}</time></p>
+          {% if can_change or can_delete %}<div class="project-card-actions">
+            {% if can_change %}<a class="button button-secondary" href="{{ entry.edit_url }}">{% include 'dashboard/partials/icon.html' with name='edit' %} Edit<span class="sr-only"> {{ entry.title }}</span></a>{% endif %}
+            {% if can_delete %}<a class="button button-danger-outline" href="{{ entry.delete_url }}">{% include 'dashboard/partials/icon.html' with name='trash' %} Delete<span class="sr-only"> {{ entry.title }}</span></a>{% endif %}
+          </div>{% endif %}
+        </article>
+      {% endfor %}
+    </div>
+    {% if is_paginated %}<nav class="project-pagination" aria-label="{{ section_title }} pages">
+      {% if page_obj.has_previous %}<a class="button button-secondary" href="?{{ filter_query }}&amp;page={{ page_obj.previous_page_number }}">Previous</a>{% endif %}
+      <span>Page {{ page_obj.number }} of {{ paginator.num_pages }}</span>
+      {% if page_obj.has_next %}<a class="button button-secondary" href="?{{ filter_query }}&amp;page={{ page_obj.next_page_number }}">Next</a>{% endif %}
+    </nav>{% endif %}
+  {% else %}
+    <section class="overview-panel project-empty">
+      {% if query or status_filter %}
+        {% include 'dashboard/partials/empty_state.html' with icon=section_icon title='No matching entries' description='Try another search or publication status.' only %}
+        <a class="button button-secondary" href="{{ list_url }}">Clear filters</a>
+      {% else %}
+        {% include 'dashboard/partials/empty_state.html' with icon=section_icon title=empty_title description=section_description only %}
+        {% if can_add %}<a class="button button-primary" href="{{ create_url }}">Add {{ entry_label }}</a>{% endif %}
+      {% endif %}
+    </section>
+  {% endif %}
+{% endblock %}

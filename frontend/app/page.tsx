@@ -72,7 +72,6 @@ import {
 } from '@/components/portfolio-panels';
 import { useTheme } from '@/lib/theme';
 import {
-  allowDemo,
   loadPortfolio,
   safeUrl,
   initialPortfolio,
@@ -252,8 +251,16 @@ export default function Portfolio() {
   }, [data]);
   useEffect(() => {
     scrollRef.current?.scrollTo({ top: 0 });
-    document.title = `${section} | ${profile.name}`;
-  }, [section, profile.name]);
+    document.title = profile.name
+      ? `${section} | ${profile.name}`
+      : 'Portfolio OS';
+    document
+      .querySelector('meta[name="description"]')
+      ?.setAttribute(
+        'content',
+        profile.bio || 'A personal portfolio workspace.',
+      );
+  }, [section, profile.name, profile.bio]);
 
   const navigate = useCallback((name: Section) => {
     setSection(name);
@@ -295,7 +302,7 @@ export default function Portfolio() {
             <button onClick={() => navigate('Overview')} className="os-brand">
               <Terminal size={17} />
               <strong>
-                {profile.name.split(' ')[0].toLowerCase()}
+                {(profile.name.split(' ')[0] || 'portfolio').toLowerCase()}
                 <span>.os</span>
               </strong>
             </button>
@@ -416,7 +423,9 @@ export default function Portfolio() {
             </div>
             <span>
               <Folder size={15} />
-              {profile.name.split(' ')[0]}&apos;s workspace
+              {profile.name
+                ? `${profile.name.split(' ')[0]}'s workspace`
+                : 'Portfolio workspace'}
             </span>
             <span className="titlebar-label">PERSONAL PORTFOLIO</span>
           </header>
@@ -495,7 +504,7 @@ export default function Portfolio() {
                 ref={scrollRef}
                 className="content-scroll"
               >
-                {connection === 'offline' && !allowDemo ? (
+                {connection === 'offline' ? (
                   <div className="connection-error">
                     <Folder size={34} />
                     <h1>Temporarily unavailable.</h1>
@@ -514,7 +523,7 @@ export default function Portfolio() {
                       Try again
                     </button>
                   </div>
-                ) : connection === 'loading' && !allowDemo ? (
+                ) : connection === 'loading' ? (
                   <output className="connection-error">
                     Loading portfolio...
                   </output>
@@ -534,7 +543,7 @@ export default function Portfolio() {
                     ? 'Connecting...'
                     : connection === 'live'
                       ? 'Workspace up to date'
-                      : 'Offline preview'}
+                      : 'Connection unavailable'}
                   {profile.is_demo && (
                     <span className="mobile-demo"> · Sample content</span>
                   )}
@@ -644,7 +653,7 @@ export default function Portfolio() {
             </div>
             <div className="preference-row">
               <span>Portfolio connection</span>
-              <span>{connection === 'live' ? 'Connected' : 'Preview'}</span>
+              <span>{connection === 'live' ? 'Connected' : 'Unavailable'}</span>
             </div>
             <button
               className="secondary-button"

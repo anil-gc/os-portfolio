@@ -1,0 +1,10 @@
+{% extends 'dashboard/skills/base.html' %}
+{% block title %}Delete skill{% endblock %}
+{% block content %}
+  <div class="page-heading"><div><span class="eyebrow">CONFIRM DELETION</span><h1>Delete skill?</h1><p>Review the skill before you continue.</p></div></div>
+  <section class="delete-panel overview-panel">
+    <span class="delete-icon">{% include 'dashboard/partials/icon.html' with name='trash' %}</span>
+    <h2>{{ object.name }}</h2><p>Are you sure you want to delete this skill? It will be removed from your dashboard and public portfolio. This cannot be undone.</p>
+    <form method="post">{% csrf_token %}<div class="form-actions"><button type="submit" class="button button-danger">Delete skill</button>{% include 'dashboard/skills/cancel.html' %}</div></form>
+  </section>
+{% endblock %}

@@ -17,5 +17,6 @@ frontend/.vinext/
 frontend/.next/
 *.log
 /output/playwright/
+/.playwright-cli/
 .env.*
 !.env.example

@@ -1,0 +1,31 @@
+{% extends 'dashboard/messages/base.html' %}
+{% block title %}Messages{% endblock %}
+{% block content %}
+  <div class="page-heading"><div><span class="eyebrow">YOUR PRIVATE INBOX</span><h1>Contact messages</h1><p>Conversations that start on your portfolio. <span>{{ inbox_counts.total }} total &middot; {{ inbox_counts.unread }} unread</span></p></div></div>
+  <form method="get" class="project-filters" role="search" aria-label="Filter messages">
+    <div><label for="message-search">Search messages</label><input id="message-search" type="search" name="q" value="{{ query }}" maxlength="160" placeholder="Search sender, email, or subject"></div>
+    <div><label for="message-status">Status</label><select id="message-status" name="status"><option value="">All messages</option><option value="unread" {% if status_filter == 'unread' %}selected{% endif %}>Unread</option><option value="read" {% if status_filter == 'read' %}selected{% endif %}>Read</option></select></div>
+    <button class="button button-secondary" type="submit">Apply filters</button>
+    {% if query or status_filter %}<a class="button button-secondary" href="{% url 'dashboard:message-list' %}">Clear filters</a>{% endif %}
+  </form>
+  <div class="section-heading"><h2>{{ paginator.count }} message{{ paginator.count|pluralize }}{% if query or status_filter %} found{% endif %}</h2><span>Newest first</span></div>
+  {% if entries %}
+    <ul class="inbox-list">
+      {% for entry in entries %}<li class="inbox-card{% if not entry.is_read %} inbox-card-unread{% endif %}">
+        <div class="inbox-card-heading"><span class="inbox-sender">{{ entry.name }}</span>{% include 'dashboard/messages/status.html' with entry=entry only %}</div>
+        <p class="inbox-email">{{ entry.email }}</p>
+        <h2><a class="inbox-subject" href="{% url 'dashboard:message-detail' entry.pk %}">{{ entry.subject }}</a></h2>
+        <p class="inbox-preview">{{ entry.preview|truncatechars:180 }}</p>
+        <div class="inbox-card-footer"><time datetime="{{ entry.created_at|date:'c' }}">{{ entry.created_at|date:'M j, Y, H:i T' }}</time><a class="button button-small button-secondary" href="{% url 'dashboard:message-detail' entry.pk %}">Open message<span class="sr-only">: {{ entry.subject }}</span> {% include 'dashboard/partials/icon.html' with name='right' %}</a></div>
+      </li>{% endfor %}
+    </ul>
+    {% if is_paginated %}<nav class="project-pagination" aria-label="Message pages">
+      {% if page_obj.has_previous %}<a class="button button-secondary" href="?{{ filter_query }}&amp;page={{ page_obj.previous_page_number }}">Previous</a>{% endif %}
+      <span>Page {{ page_obj.number }} of {{ paginator.num_pages }}</span>
+      {% if page_obj.has_next %}<a class="button button-secondary" href="?{{ filter_query }}&amp;page={{ page_obj.next_page_number }}">Next</a>{% endif %}
+    </nav>{% endif %}
+  {% else %}<section class="overview-panel project-empty">
+    {% if query or status_filter %}{% include 'dashboard/partials/empty_state.html' with icon='mail' title='No matching messages' description='Try another search or read status.' only %}<a class="button button-secondary" href="{% url 'dashboard:message-list' %}">Clear filters</a>
+    {% else %}{% include 'dashboard/partials/empty_state.html' with icon='mail' title='No contact messages yet.' description='New submissions from your portfolio contact form will appear here.' only %}{% endif %}
+  </section>{% endif %}
+{% endblock %}

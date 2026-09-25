@@ -1,0 +1,20 @@
+{% extends 'dashboard/messages/base.html' %}
+{% block title %}Message details{% endblock %}
+{% block content %}
+  <div class="page-heading"><div><span class="eyebrow">CONTACT MESSAGES</span><h1>Message details</h1><p>Opening a message keeps its current status. Mark it read when you are ready.</p></div></div>
+  <a class="text-link inbox-back" href="{% url 'dashboard:message-list' %}">&larr; Back to messages</a>
+  {% if status_error %}<div class="alert alert-error" role="alert">{{ status_error }}</div>{% endif %}
+  <article class="overview-panel inbox-detail">
+    <div class="inbox-detail-heading"><h2>{{ entry.subject }}</h2>{% include 'dashboard/messages/status.html' with entry=entry only %}</div>
+    <dl class="inbox-metadata">
+      <div><dt>From</dt><dd>{{ entry.name }}</dd></div>
+      <div><dt>Email</dt><dd>{{ entry.email }}</dd></div>
+      <div><dt>Received</dt><dd><time datetime="{{ entry.created_at|date:'c' }}">{{ entry.created_at|date:'M j, Y, H:i T' }}</time></dd></div>
+    </dl>
+    <div class="inbox-body">{{ entry.message }}</div>
+    {% if can_change or can_delete %}<div class="inbox-actions">
+      {% if can_change %}<form method="post" action="{% url 'dashboard:message-status' entry.pk %}">{% csrf_token %}<input type="hidden" name="status" value="{% if entry.is_read %}unread{% else %}read{% endif %}"><button class="button button-primary" type="submit">{% if entry.is_read %}Mark as Unread{% else %}Mark as Read{% endif %}</button></form>{% endif %}
+      {% if can_delete %}<a class="button button-danger-outline" href="{% url 'dashboard:message-delete' entry.pk %}">{% include 'dashboard/partials/icon.html' with name='trash' %} Delete message</a>{% endif %}
+    </div>{% endif %}
+  </article>
+{% endblock %}

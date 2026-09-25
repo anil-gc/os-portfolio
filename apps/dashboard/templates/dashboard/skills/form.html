@@ -1,0 +1,25 @@
+{% extends 'dashboard/skills/base.html' %}
+{% block title %}{% if object %}Edit skill{% else %}Add skill{% endif %}{% endblock %}
+{% block content %}
+  <div class="page-heading"><div><span class="eyebrow">YOUR TOOLKIT</span><h1>{% if object %}Edit skill{% else %}Add skill{% endif %}</h1><p>{% if object %}Update {{ object.name }}.{% else %}Add a technology you want to showcase.{% endif %} Fields marked * are required.</p></div></div>
+  <form method="post" class="project-form" novalidate>
+    {% csrf_token %}
+    {% if form.errors %}<div class="alert alert-error" role="alert"><div><strong>Please fix the highlighted fields.</strong>{{ form.non_field_errors }}<ul>{% for field in form %}{% if field.errors %}<li><a href="#{{ field.id_for_label }}">{{ field.label }}: {{ field.errors|striptags }}</a></li>{% endif %}{% endfor %}</ul></div></div>{% endif %}
+    <div class="project-form-grid">
+      <fieldset class="form-panel"><legend>About the skill</legend>
+        {% include 'dashboard/partials/field.html' with field=form.name %}
+        {% include 'dashboard/partials/field.html' with field=form.category %}
+        <datalist id="skill-categories">{% for category in form.categories %}<option value="{{ category }}"></option>{% endfor %}</datalist>
+        {% include 'dashboard/partials/field.html' with field=form.level %}
+      </fieldset>
+      <div>
+        <fieldset class="form-panel"><legend>Display and publishing</legend>
+          {% include 'dashboard/partials/field.html' with field=form.sort_order %}
+          {% include 'dashboard/projects/toggle_field.html' with field=form.is_published %}
+        </fieldset>
+        <p class="project-form-note">Published skills appear in your portfolio’s Skills section. Drafts remain private. Changes save only when you select Save skill.</p>
+      </div>
+    </div>
+    <div class="form-actions"><button type="submit" class="button button-primary">Save skill</button>{% include 'dashboard/skills/cancel.html' %}</div>
+  </form>
+{% endblock %}

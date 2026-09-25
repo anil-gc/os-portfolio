@@ -1,6 +1,8 @@
 from django.db import models
+from django.core.validators import FileExtensionValidator
 
 from apps.core.models import TimeStampedModel
+from apps.core.validators import validate_profile_image
 
 
 class Profile(TimeStampedModel):
@@ -15,6 +17,10 @@ class Profile(TimeStampedModel):
     github_url = models.URLField(blank=True)
     linkedin_url = models.URLField(blank=True)
     avatar_url = models.URLField(blank=True)
+    avatar = models.ImageField(
+        upload_to="profiles/%Y/%m/", blank=True,
+        validators=[FileExtensionValidator(["jpg", "jpeg", "png", "webp"]), validate_profile_image],
+    )
     available = models.BooleanField(default=False)
     is_demo = models.BooleanField(default=True, help_text="Keep enabled until all sample credentials and content have been replaced.")
 

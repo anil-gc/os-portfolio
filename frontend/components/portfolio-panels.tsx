@@ -313,9 +313,12 @@ export function About({ data, navigate }: Props) {
         </div>
       </div>
       <div className="prose">
-        {p.about.split('\n\n').map((paragraph, i) => (
-          <p key={i}>{paragraph}</p>
-        ))}
+        {p.about
+          .split(/\r?\n\s*\r?\n/)
+          .filter((paragraph) => paragraph.trim())
+          .map((paragraph, i) => (
+            <p key={i}>{paragraph}</p>
+          ))}
       </div>
       <div className="about-principles">
         <div>
@@ -587,6 +590,8 @@ export function Contact({ data, connected }: Props) {
       if (!response.ok) {
         if (response.status === 429)
           throw new Error('Too many messages. Please try again in an hour.');
+        if (response.status !== 400)
+          throw new Error('Your message could not be sent. Please try again.');
         const details = await response.json().catch(() => null);
         throw new Error(
           details

@@ -8,6 +8,7 @@ class MessageSerializer(serializers.ModelSerializer):
     class Meta:
         model = Message
         fields = ("name", "email", "subject", "message", "website")
+        extra_kwargs = {"message": {"min_length": 10}}
 
     def validate_website(self, value):
         if value:

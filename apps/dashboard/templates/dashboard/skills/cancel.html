@@ -1,0 +1,1 @@
+<a class="button button-secondary" href="{% if perms.skills.view_skill or perms.skills.change_skill %}{% url 'dashboard:skill-list' %}{% else %}{% url 'dashboard:home' %}{% endif %}">Cancel</a>

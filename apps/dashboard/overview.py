@@ -27,16 +27,17 @@ def get_overview(user):
     )
     for model, label, icon, tone, action in content:
         opts = model._meta
+        dashboard_name = {Project: "project", Skill: "skill", Certificate: "certificate", Experience: "experience"}.get(model)
         if can_view(user, model):
             counts = model.objects.aggregate(total=Count("pk"), published=Count("pk", filter=Q(is_published=True)))
             drafts = counts["total"] - counts["published"]
             stats.append({
                 "label": label, "icon": icon, "tone": tone, "total": counts["total"],
                 "detail": f'{counts["published"]} published · {drafts} draft' + ("" if drafts == 1 else "s"),
-                "url": reverse("dashboard:project-list" if model is Project else f"admin:{opts.app_label}_{opts.model_name}_changelist"),
+                "url": reverse(f"dashboard:{dashboard_name}-list" if dashboard_name else f"admin:{opts.app_label}_{opts.model_name}_changelist"),
             })
         if action and user.has_perm(f"{opts.app_label}.add_{opts.model_name}"):
-            actions.append({"label": action, "icon": icon, "url": reverse("dashboard:project-create" if model is Project else f"admin:{opts.app_label}_{opts.model_name}_add")})
+            actions.append({"label": action, "icon": icon, "url": reverse(f"dashboard:{dashboard_name}-create" if dashboard_name else f"admin:{opts.app_label}_{opts.model_name}_add")})
 
     context["show_projects"] = can_view(user, Project)
     if context["show_projects"]:
@@ -49,7 +50,7 @@ def get_overview(user):
         counts = Message.objects.aggregate(total=Count("pk"), unread=Count("pk", filter=Q(is_read=False)))
         stats.append({
             "label": "Contact messages", "icon": "mail", "tone": "blue", "total": counts["total"],
-            "detail": f'{counts["unread"]} unread', "url": reverse("admin:contact_message_changelist"),
+            "detail": f'{counts["unread"]} unread', "url": reverse("dashboard:message-list"),
         })
         context["unread_messages"] = counts["unread"]
         # Do not fetch email addresses or message bodies for the overview.
@@ -60,7 +61,7 @@ def get_overview(user):
     if user.has_perm("portfolio.change_profile") or user.has_perm("portfolio.add_profile"):
         profile_pk = Profile.objects.values_list("pk", flat=True).first()
         if profile_pk is not None and user.has_perm("portfolio.change_profile"):
-            actions.append({"label": "Edit profile", "icon": "user", "url": reverse("admin:portfolio_profile_change", args=[profile_pk])})
+            actions.append({"label": "Edit profile", "icon": "user", "url": reverse("dashboard:profile")})
         elif profile_pk is None and user.has_perm("portfolio.add_profile"):
-            actions.append({"label": "Set up profile", "icon": "user", "url": reverse("admin:portfolio_profile_add")})
+            actions.append({"label": "Set up profile", "icon": "user", "url": reverse("dashboard:profile")})
     return context

@@ -1,5 +1,4 @@
-import sample from '../data/demo.json';
-import savedPortfolio from '../data/portfolio.json';
+import type sample from '../data/demo.json';
 
 export type Project = (typeof sample.projects)[number];
 export type PortfolioData = Omit<typeof sample, 'resume'> & {
@@ -21,8 +20,29 @@ export const apiBase = (import.meta.env.VITE_API_BASE_URL || '/api/v1').replace(
   /\/$/,
   '',
 );
-export const allowDemo = import.meta.env.VITE_ALLOW_DEMO_FALLBACK !== 'false';
-export const initialPortfolio: PortfolioData = savedPortfolio;
+// Empty loading state only. Personal content always comes from Django.
+export const initialPortfolio: PortfolioData = {
+  profile: {
+    name: '',
+    headline: '',
+    location: '',
+    intro: '',
+    bio: '',
+    about: '',
+    email: '',
+    github_url: '',
+    linkedin_url: '',
+    avatar_url: '',
+    available: false,
+    is_demo: false,
+  },
+  projects: [],
+  skills: [],
+  experience: [],
+  education: [],
+  certificates: [],
+  resume: null,
+};
 
 export function safeUrl(value: string | null | undefined): string | undefined {
   if (!value) return undefined;

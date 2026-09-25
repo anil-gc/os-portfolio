@@ -1,0 +1,22 @@
+{% extends 'dashboard/history/base.html' %}
+{% block title %}{% if object %}Edit{% else %}Add{% endif %} {{ entry_label }}{% endblock %}
+{% block content %}
+  <div class="page-heading"><div><span class="eyebrow">{{ section_title|upper }}</span><h1>{% if object %}Edit{% else %}Add{% endif %} {{ entry_label }}</h1><p>{% if object %}Update {{ object }}.{% else %}{{ section_description }}{% endif %} Fields marked * are required.</p></div></div>
+  <form method="post" class="project-form" novalidate>
+    {% csrf_token %}
+    {% if form.errors %}<div class="alert alert-error" role="alert"><div><strong>Please fix the highlighted fields.</strong>{{ form.non_field_errors }}<ul>{% for field in form %}{% if field.errors %}<li><a href="#{{ field.id_for_label }}">{{ field.label }}: {{ field.errors|striptags }}</a></li>{% endif %}{% endfor %}</ul></div></div>{% endif %}
+    <div class="project-form-grid">
+      <fieldset class="form-panel"><legend>{{ entry_label|capfirst }} details</legend>
+        {% for field in form.detail_fields %}{% include 'dashboard/partials/field.html' with field=field %}{% endfor %}
+      </fieldset>
+      <div>
+        <fieldset class="form-panel"><legend>Display and publishing</legend>
+          {% include 'dashboard/partials/field.html' with field=form.sort_order %}
+          {% include 'dashboard/projects/toggle_field.html' with field=form.is_published %}
+        </fieldset>
+        <p class="project-form-note">Published entries appear in your portfolio’s {{ section_title }} section. Drafts remain private. Changes save only when you select Save {{ entry_label }}.</p>
+      </div>
+    </div>
+    <div class="form-actions"><button type="submit" class="button button-primary">Save {{ entry_label }}</button><a class="button button-secondary" href="{{ cancel_url }}">Cancel</a></div>
+  </form>
+{% endblock %}

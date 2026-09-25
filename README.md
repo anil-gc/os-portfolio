@@ -3,13 +3,13 @@
 A React portfolio with a desktop-inspired workspace and a Django REST Framework
 content backend. All personal details, projects, skills, work experience,
 education, certificates, and resume records are editable in Django admin.
-Contact submissions are stored in a private admin inbox.
+Contact submissions are stored in a private dashboard inbox.
 
 The local profile and hosted preview now contain Anil GC's conversation-backed
 project information. Unverified contact details, location, credentials, and
 proficiency claims are omitted. Original sample records remain unpublished in
-admin; `frontend/data/demo.json` is only the optional seed fixture. The saved
-preview snapshot is `frontend/data/portfolio.json`.
+admin; `frontend/data/demo.json` is only the optional seed fixture. Public personal
+content now comes exclusively from Django; there is no bundled owner snapshot.
 
 ## Run Locally
 
@@ -52,7 +52,10 @@ optional: you can enter all your content directly in admin instead.
 
 ## Edit the Portfolio
 
-### Custom Dashboard (Tasks 1, 2 and 3)
+### Custom Dashboard (Tasks 1–7)
+
+Task 7 is complete. See [the dashboard handoff](docs/DASHBOARD_HANDOFF.md)
+for scope, changed files, verification results, and the proposed next task.
 
 Open `/dashboard/` on the Django server and sign in with your existing active
 staff account. The custom sign-in page, responsive workspace shell, accessible
@@ -63,8 +66,8 @@ by modification date and four messages by submission date. Message email address
 and bodies are not fetched or shown on the overview.
 
 Summaries and recent content require the corresponding view or change permission.
-Projects are managed directly in the custom dashboard; other quick actions open
-existing Django admin forms with the relevant permissions. The profile action
+Projects, skills, experience, education, and certificates are managed directly in
+the custom dashboard. Profile editing opens `/dashboard/profile/` with the relevant permissions. The profile action
 offers setup if no profile exists. Counts use one aggregate query per model; recent lists are
 limited queries with only the displayed fields. No dashboard caching is added.
 
@@ -112,9 +115,107 @@ stay private. The public frontend loads current data on page load, manual refres
 and when returning to a visible/focused tab. No rebuild is required for content
 changes. A disconnected static preview still cannot synchronize with the database.
 
+Skills use the existing Skill model, with no schema changes:
+
+- `/dashboard/skills/`: all skills, search by name/category, publication filters,
+  and pagination (20 per page), ordered by display order then ID.
+- `/dashboard/skills/new/`: create a skill.
+- `/dashboard/skills/<id>/edit/`: update name, category, proficiency, order, and publication.
+- `/dashboard/skills/<id>/delete/`: confirm, then delete with a CSRF-protected POST.
+
+Active staff need `view_skill` or `change_skill` to list records, and the matching
+`add_skill`, `change_skill`, or `delete_skill` permission for each mutation.
+Categories are existing free-text values with suggestions from saved skills.
+Proficiency keeps the existing Learning, Proficient, and Advanced choices.
+Duplicate names, missing fields, invalid choices, and invalid orders show field errors.
+Both `/api/v1/skills/` and `/api/v1/portfolio/site/` read the same published records.
+The public Skills section keeps its category groups and shared code icon. Display
+order determines category appearance and the order of skills within each group.
+There are no icon uploads or percentage bars. The public refresh behavior described
+above also applies to skills; project technology tags remain separate project data.
+
+Experience, education, and certificates also have custom management pages:
+
+| Section | List | Create | Edit / delete |
+| --- | --- | --- | --- |
+| Experience | `/dashboard/experience/` | `/dashboard/experience/new/` | `/dashboard/experience/<id>/edit/` or `delete/` |
+| Education | `/dashboard/education/` | `/dashboard/education/new/` | `/dashboard/education/<id>/edit/` or `delete/` |
+| Certificates | `/dashboard/certificates/` | `/dashboard/certificates/new/` | `/dashboard/certificates/<id>/edit/` or `delete/` |
+
+These reuse the existing models without migrations or new dependencies. Each list
+supports title/organization search, publication filters, and 10 entries per page.
+Forms edit existing fields, including display order and publication. Active staff
+need the matching model's view/change permission to list records and add, change,
+or delete permission for each action. Deletion requires confirmation and a
+CSRF-protected POST; GET only shows the confirmation page.
+
+Experience and education use full date controls matching their DateFields. A blank
+end date means Present; there is no separate current-position flag. Existing model
+validation rejects end dates before start dates. Certificates support an optional
+HTTP/HTTPS credential URL, but no uploaded image or credential-ID field. The form
+supports retaining, replacing, or clearing that URL. No media system is added.
+
+All three public list APIs and the combined portfolio API read these same published
+records, ordered by display order then ID. Their public timelines and certificate
+cards keep their existing design and refresh behavior. Django admin remains a
+fallback. Media and Settings remain outside the completed scope.
+
+### Profile / About management
+
+Open `/dashboard/profile/` to edit the existing singleton profile: name, professional
+headline, hero heading, short introduction, About text, location, public email,
+GitHub/LinkedIn URLs, photo, availability, and sample-content labels. The current
+resume's title, summary, PDF, and publication status are included when you have
+the relevant resume add/change permission. No profile list or deletion is needed.
+
+The database remains the source of truth. The public API reads these same models,
+and React refreshes on page load, manual refresh, or return to a focused/visible
+tab. The headline appears in the sidebar, About, and resume; the separate hero
+heading controls Overview. Existing public layout and Django Admin are retained.
+
+Install the updated requirements (Pillow) and run `manage.py migrate` for the new
+optional profile image and PDF validation migration. Photos accept verified JPEG,
+PNG, or WebP files up to 5 MB and 20 megapixels. PDFs require a `.pdf` extension,
+PDF header/end marker, and a maximum size of 5 MB. These checks are not a malware
+scanner. Both use the existing Django media storage. An uploaded photo takes
+priority over the optional external URL. Clearing both restores initials.
+
+No replacement preserves the existing file. Replacement writes a new storage
+filename; old files are retained, avoiding destructive deletion of shared files.
+Resume drafts are excluded from the API, but media URLs are public once known,
+as with the existing storage setup. Removing a link does not revoke its file URL.
+The editor selects the first published resume using existing display order, or
+the first saved draft if none is public. Other resume records remain in Admin.
+
+### Contact messages management
+
+Open `/dashboard/messages/` for the private inbox. It uses the same `Message`
+records saved by the public Contact form at `POST /api/v1/contact/`. No email
+delivery, third-party service, duplicate model, or migration is involved.
+
+Messages are newest first, with 10 per page, concise previews, sender details,
+read/unread badges, name/email/subject search, and a status filter. Open a message
+to read its full text. Reading does not change status; use **Mark as Read** or
+**Mark as Unread**. **Delete message** opens a confirmation page, and only its
+CSRF-protected POST deletes the record. The overview retains live total/unread
+counts and four recent entries; its links now open the custom inbox and details.
+Emails and bodies remain excluded from overview queries and display.
+
+Active staff need `contact.view_message` or `contact.change_message` to read.
+Status changes require `contact.change_message`; deletion requires
+`contact.delete_message` plus view/change permission. The public endpoint only
+accepts new submissions; it exposes neither message lists nor details. Success
+returns a receipt acknowledgement without message content or an ID. Existing
+honeypot and five-per-hour throttling remain in place, and server validation now
+also enforces the form's existing 10-character message minimum (5,000 maximum).
+No outbound reply, notification, or inbox integration was added.
+
+See [the Task 7 handoff](docs/TASK7_MESSAGES_HANDOFF.md) for routes, permissions,
+changed files, the 233-test result, and public-form-to-dashboard browser evidence.
+
 The existing Django admin remains available for all content:
 
-1. Open Django admin and update the single profile, including name, headline,
+1. Open `/dashboard/profile/` and update the single profile, including name, headline,
    location, intro, bio, about text, email, social links, avatar URL, and availability.
 2. Edit or delete the sample domain records. Publish records to make them public;
    drafts are excluded from every public API. Sort order controls display order.
@@ -124,7 +225,7 @@ The existing Django admin remains available for all content:
    resume generated from your published content. Resume uploads are limited to 5 MB.
 5. Turn off the profile's demo flag only after replacing all sample credentials
    and content. Refresh the frontend or use Preferences > Refresh content.
-6. Read contact submissions under Contact > Messages. Messages are never publicly
+6. Read contact submissions at `/dashboard/messages/`. Messages are never publicly
    listed. The form saves to the inbox; it does not send email or subscribe anyone.
 
 The sample projects, employers, education, and certificates are fictional.
@@ -209,12 +310,10 @@ and media requests to Django at port 8000. Production Caddy serves React and Dja
 under one HTTPS origin, avoiding broad CORS configuration and cross-origin admin
 cookies.
 
-A standalone hosted React preview can show `data/portfolio.json` when no Django API
-is attached and `VITE_ALLOW_DEMO_FALLBACK=true`. This offline mode is visibly marked and
-disables message submission. It does not synchronize with your local admin.
-The production container sets fallback to false and shows an honest unavailable
-state if Django cannot be reached. A Sites static deployment hosts the frontend
-only; full Django hosting requires the deployment setup below.
+The frontend requires the Django API for portfolio content. It shows loading or
+unavailable feedback if the API cannot be reached, rather than a stale personal
+snapshot. `VITE_ALLOW_DEMO_FALLBACK` is no longer used. A Sites static deployment
+hosts the frontend only; connect it to Django or use the deployment setup below.
 
 ## Full Production Deployment
 

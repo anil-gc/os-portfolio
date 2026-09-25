@@ -1,0 +1,22 @@
+.inbox-list { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 20px; list-style: none; padding: 0; margin: 0; }
+.inbox-card { min-width: 0; display: flex; flex-direction: column; padding: 24px; border: 1px solid var(--border); border-radius: 12px; background: var(--surface); overflow-wrap: anywhere; }
+.inbox-card-unread { border-inline-start: 3px solid var(--primary); }
+.inbox-card-heading, .inbox-card-footer, .inbox-detail-heading { display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; }
+.inbox-card-heading .status-badge, .inbox-detail-heading .status-badge { flex-shrink: 0; }
+.inbox-sender { font-size: 13px; font-weight: 600; }
+.inbox-email { font-size: 12px; color: var(--muted); margin: 5px 0 18px; }
+.inbox-card h2 { font-size: 17px; line-height: 1.5; }
+.inbox-subject:hover { color: var(--primary); text-decoration: underline; text-underline-offset: 3px; }
+.inbox-preview { font-size: 13px; line-height: 1.7; color: var(--muted); margin: 10px 0 22px; white-space: normal; }
+.inbox-card-footer { margin-top: auto; padding-top: 16px; border-top: 1px solid var(--border); font-size: 11px; color: var(--muted); }
+.inbox-back { display: inline-block; margin-bottom: 20px; min-height: 44px; padding-block: 12px; }
+.inbox-detail { padding: 32px; overflow-wrap: anywhere; min-width: 0; }
+.inbox-detail-heading { align-items: flex-start; }
+.inbox-detail-heading h2 { font-size: 24px; line-height: 1.4; min-width: 0; flex: 1 1 240px; }
+.inbox-metadata { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 20px; padding-block: 24px; margin: 0; border-bottom: 1px solid var(--border); }
+.inbox-metadata dt { color: var(--muted); font-size: 11px; margin-bottom: 6px; }
+.inbox-metadata dd { margin: 0; font-size: 13px; }
+.inbox-body { white-space: pre-wrap; line-height: 1.85; padding-block: 28px; }
+.inbox-actions { display: flex; flex-wrap: wrap; gap: 12px; padding-top: 24px; border-top: 1px solid var(--border); }
+@media (max-width: 1100px) { .inbox-list { grid-template-columns: minmax(0, 1fr); } }
+@media (max-width: 700px) { .inbox-card, .inbox-detail { padding: 20px; } .inbox-metadata { grid-template-columns: minmax(0, 1fr); } .inbox-detail-heading h2 { font-size: 20px; } }

@@ -1,0 +1,10 @@
+{% extends 'dashboard/messages/base.html' %}
+{% block title %}Delete message{% endblock %}
+{% block content %}
+  <div class="page-heading"><div><span class="eyebrow">CONFIRM DELETION</span><h1>Delete message?</h1><p>Review this message before you continue.</p></div></div>
+  <section class="delete-panel overview-panel">
+    <span class="delete-icon">{% include 'dashboard/partials/icon.html' with name='trash' %}</span>
+    <h2>{{ entry.subject }}</h2><p>Delete this message from {{ entry.name }}? It will be permanently removed from your inbox. This cannot be undone.</p>
+    <form method="post">{% csrf_token %}<div class="form-actions"><button type="submit" class="button button-danger">Delete message</button><a class="button button-secondary" href="{% url 'dashboard:message-detail' entry.pk %}">Cancel</a></div></form>
+  </section>
+{% endblock %}

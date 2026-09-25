@@ -11,11 +11,11 @@ contains content views. Data and URL helpers are in `lib/portfolio.ts`.
 origin as Django using the parent repository's Caddy configuration. `npm start`
 previews the static output locally; it is not a production application server.
 
-`VITE_API_BASE_URL` is a build-time public API base. `VITE_ALLOW_DEMO_FALLBACK=true`
-permits a standalone preview of `data/portfolio.json`. Live deployments should set it to false.
-The standalone preview cannot send messages or edit Django data while disconnected.
-The original fictional seed fixture is separate from the personalized snapshot. Search indexing is
-disabled until the profile and static metadata are ready for public launch.
+`VITE_API_BASE_URL` is a build-time public API base. Portfolio content always comes
+from Django. Loading and unavailable states replace the old bundled personal
+snapshot; `VITE_ALLOW_DEMO_FALLBACK` is no longer used. `data/demo.json` is an
+optional backend seed fixture and a type-only import, never runtime content.
+Search indexing remains disabled until the site is ready for public launch.
 
 Run `npm run typecheck`, `npm run lint`, and `npm run build` before publishing.
 The lint configuration excludes generated, unmodified UI primitives and their

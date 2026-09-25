@@ -1,0 +1,44 @@
+{% extends 'dashboard/skills/base.html' %}
+{% block title %}Skills{% endblock %}
+{% block content %}
+  <div class="page-heading project-heading">
+    <div><span class="eyebrow">YOUR EVERYDAY TOOLKIT</span><h1>Skills</h1><p>Manage the technologies you use. Choose what appears on your portfolio.</p></div>
+    {% if perms.skills.add_skill %}<a class="button button-primary" href="{% url 'dashboard:skill-create' %}">{% include 'dashboard/partials/icon.html' with name='plus' %} Add skill</a>{% endif %}
+  </div>
+  <form method="get" class="project-filters" role="search" aria-label="Filter skills">
+    <div><label for="skill-search">Search skills</label><input id="skill-search" name="q" type="search" value="{{ query }}" maxlength="160" placeholder="Search name or category"></div>
+    <div><label for="skill-status">Publication status</label><select name="status" id="skill-status"><option value="">All statuses</option><option value="published" {% if status_filter == 'published' %}selected{% endif %}>Published</option><option value="draft" {% if status_filter == 'draft' %}selected{% endif %}>Draft</option></select></div>
+    <button class="button button-secondary" type="submit">Apply filters</button>
+    {% if query or status_filter %}<a class="button button-secondary" href="{% url 'dashboard:skill-list' %}">Clear</a>{% endif %}
+  </form>
+  <div class="section-heading"><h2>{{ paginator.count }} skill{{ paginator.count|pluralize }}{% if query or status_filter %} found{% endif %}</h2><span>Sorted by display order</span></div>
+  {% if skills %}
+    <div class="skill-list">
+      {% for skill in skills %}
+        <article class="managed-skill">
+          <div class="skill-identity"><span class="skill-symbol">{% include 'dashboard/partials/icon.html' with name='code' %}</span><div><h2>{{ skill.name }}</h2><p>{{ skill.category }}</p></div></div>
+          <dl class="skill-details"><div><dt>Proficiency</dt><dd>{{ skill.level }}</dd></div><div><dt>Order</dt><dd>{{ skill.sort_order }}</dd></div><div><dt>Visibility</dt><dd><span class="status-badge {% if skill.is_published %}status-published{% else %}status-draft{% endif %}">{% if skill.is_published %}Published{% else %}Draft{% endif %}</span></dd></div></dl>
+          <div class="skill-actions">
+            {% if perms.skills.change_skill %}<a class="button button-secondary" href="{% url 'dashboard:skill-update' skill.pk %}">{% include 'dashboard/partials/icon.html' with name='edit' %} Edit<span class="sr-only"> {{ skill.name }}</span></a>{% endif %}
+            {% if perms.skills.delete_skill %}<a class="button button-danger-outline" href="{% url 'dashboard:skill-delete' skill.pk %}">{% include 'dashboard/partials/icon.html' with name='trash' %} Delete<span class="sr-only"> {{ skill.name }}</span></a>{% endif %}
+          </div>
+        </article>
+      {% endfor %}
+    </div>
+    {% if is_paginated %}<nav class="project-pagination" aria-label="Skill pages">
+      {% if page_obj.has_previous %}<a class="button button-secondary" href="?{{ filter_query }}&amp;page={{ page_obj.previous_page_number }}">Previous</a>{% endif %}
+      <span>Page {{ page_obj.number }} of {{ paginator.num_pages }}</span>
+      {% if page_obj.has_next %}<a class="button button-secondary" href="?{{ filter_query }}&amp;page={{ page_obj.next_page_number }}">Next</a>{% endif %}
+    </nav>{% endif %}
+  {% else %}
+    <section class="overview-panel project-empty">
+      {% if query or status_filter %}
+        {% include 'dashboard/partials/empty_state.html' with icon='code' title='No matching skills' description='Try another name, category, or publication status.' only %}
+        <a class="button button-secondary" href="{% url 'dashboard:skill-list' %}">Clear filters</a>
+      {% else %}
+        {% include 'dashboard/partials/empty_state.html' with icon='code' title='No skills added yet' description='Add the technologies you want to showcase on your portfolio.' only %}
+        {% if perms.skills.add_skill %}<a class="button button-primary" href="{% url 'dashboard:skill-create' %}">Add skill</a>{% endif %}
+      {% endif %}
+    </section>
+  {% endif %}
+{% endblock %}

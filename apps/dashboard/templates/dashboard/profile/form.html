@@ -1,0 +1,35 @@
+{% extends 'dashboard/shell.html' %}
+{% load static %}
+{% block title %}Profile / About{% endblock %}
+{% block extra_assets %}<link rel="stylesheet" href="{% static 'dashboard/projects.css' %}"><link rel="stylesheet" href="{% static 'dashboard/profile.css' %}"><script src="{% static 'dashboard/profile.js' %}" defer></script>{% endblock %}
+{% block content %}
+  <div class="page-heading"><div><span class="eyebrow">YOUR PORTFOLIO</span><h1>Profile / About</h1><p>Keep your identity, introduction, and contact details up to date. Fields marked * are required.</p></div></div>
+  <form method="post" enctype="multipart/form-data" class="project-form profile-form" novalidate>
+    {% csrf_token %}
+    {% if form.errors or resume_form.errors %}<div class="alert alert-error" role="alert"><div><strong>Please fix the highlighted fields.</strong>{{ form.non_field_errors }}{{ resume_form.non_field_errors }}<ul>{% for field in form %}{% if field.errors %}<li><a href="#{{ field.id_for_label }}">{{ field.label }}: {{ field.errors|striptags }}</a></li>{% endif %}{% endfor %}{% for field in resume_form %}{% if field.errors %}<li><a href="#{{ field.id_for_label }}">{{ field.label }}: {{ field.errors|striptags }}</a></li>{% endif %}{% endfor %}</ul></div></div>{% endif %}
+    <div class="project-form-grid">
+      <div class="project-form-main">
+        {% for title, fields in form.sections %}<fieldset class="form-panel"><legend>{{ title }}</legend>{% for field in fields %}{% include 'dashboard/partials/field.html' with field=field %}{% endfor %}</fieldset>{% endfor %}
+      </div>
+      <div class="project-form-main">
+        <fieldset class="form-panel"><legend>Profile image</legend>
+          <div class="profile-preview"><img data-profile-preview {% if current_avatar %}src="{{ current_avatar }}"{% else %}hidden{% endif %} alt="Profile photo preview"><p data-preview-caption>{% if current_avatar %}Current photo{% else %}Your portfolio uses your initials when no photo is set.{% endif %}</p></div>
+          {% include 'dashboard/partials/field.html' with field=form.avatar %}
+          {% include 'dashboard/partials/field.html' with field=form.avatar_url %}
+        </fieldset>
+        <fieldset class="form-panel"><legend>Availability and labels</legend>
+          {% include 'dashboard/projects/toggle_field.html' with field=form.available %}
+          {% include 'dashboard/projects/toggle_field.html' with field=form.is_demo %}
+        </fieldset>
+        {% if resume_form %}<fieldset class="form-panel"><legend>Resume / CV</legend>
+          <p class="field-help">Edit the current public resume, or the first saved draft if none is published. Leaving a new resume section empty does not create a resume.</p>
+          {% include 'dashboard/partials/field.html' with field=resume_form.title %}
+          {% include 'dashboard/partials/field.html' with field=resume_form.summary %}
+          {% include 'dashboard/partials/field.html' with field=resume_form.file %}
+          {% include 'dashboard/projects/toggle_field.html' with field=resume_form.is_published %}
+        </fieldset>{% else %}<p class="project-form-note">Resume editing requires the matching resume permission from your administrator.</p>{% endif %}
+      </div>
+    </div>
+    <div class="form-actions"><button type="submit" class="button button-primary">Save Changes</button><a class="button button-secondary" href="{% url 'dashboard:profile' %}">Discard changes</a></div>
+  </form>
+{% endblock %}
