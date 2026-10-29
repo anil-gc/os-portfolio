@@ -3,6 +3,13 @@ from django.core.exceptions import ImproperlyConfigured
 from .base import *  # noqa: F401,F403
 
 
+MIDDLEWARE = MIDDLEWARE.copy()  # noqa: F405
+MIDDLEWARE.insert(
+    MIDDLEWARE.index("django.middleware.security.SecurityMiddleware") + 1,
+    "whitenoise.middleware.WhiteNoiseMiddleware",
+)
+
+
 SECRET_KEY = env("DJANGO_SECRET_KEY")  # noqa: F405
 if (
     len(SECRET_KEY) < 50
