@@ -5,7 +5,7 @@ from .base import *  # noqa: F401,F403
 
 MIDDLEWARE = MIDDLEWARE.copy()  # noqa: F405
 MIDDLEWARE.insert(
-    MIDDLEWARE.index("django.middleware.security.SecurityMiddleware") + 1,
+    MIDDLEWARE.index("corsheaders.middleware.CorsMiddleware") + 1,
     "whitenoise.middleware.WhiteNoiseMiddleware",
 )
 

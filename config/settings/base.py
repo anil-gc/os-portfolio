@@ -15,6 +15,10 @@ SECRET_KEY = env("DJANGO_SECRET_KEY", default="unsafe-local-development-secret-k
 DEBUG = False
 ALLOWED_HOSTS = env("DJANGO_ALLOWED_HOSTS")
 CSRF_TRUSTED_ORIGINS = env("DJANGO_CSRF_TRUSTED_ORIGINS")
+CORS_ALLOWED_ORIGINS = env.list("DJANGO_CORS_ALLOWED_ORIGINS", default=[])
+CORS_URLS_REGEX = r"^/api/v1/"
+CORS_ALLOW_CREDENTIALS = False
+CORS_ALLOW_METHODS = ("GET", "HEAD", "OPTIONS", "POST")
 
 DJANGO_APPS = [
     "django.contrib.admin",
@@ -27,6 +31,7 @@ DJANGO_APPS = [
 
 THIRD_PARTY_APPS = [
     "rest_framework",
+    "corsheaders",
 ]
 
 LOCAL_APPS = [
@@ -46,6 +51,7 @@ INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + LOCAL_APPS
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
+    "corsheaders.middleware.CorsMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
